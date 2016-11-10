@@ -272,6 +272,31 @@
     </profile>
   </profiles>
 
+  <pluginRepositories>
+    <!-- Maven Central -->
+    <!-- Use this first, so we prefer Central all the time -->
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Maven Repository Switchboard</name>
+      <url>https://repo1.maven.org/maven2</url>
+    </pluginRepository>
+
+    <!-- For the resources used by e.g. FindBugs -->
+    <pluginRepository>
+      <id>bintray-maggu2810-maven</id>
+      <url>https://dl.bintray.com/maggu2810/maven/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
   <repositories>
     <!-- Maven Central -->
     <!-- Use this first, so we prefer Central all the time -->
