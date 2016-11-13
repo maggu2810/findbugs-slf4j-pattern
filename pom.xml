@@ -270,6 +270,72 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>annotated-jdk</id>
+      <activation>
+        <property>
+          <name>annotated-jdk</name>
+        </property>
+      </activation>
+
+      <properties>
+        <!-- These properties will be set by the Maven Dependency plugin -->
+        <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
+      </properties>
+
+      <dependencyManagement>
+        <dependencies>
+          <!-- The annotated JDK to use -->
+          <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>jdk8</artifactId>
+            <version>${checkerframework.version}</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+
+      <dependencies>
+        <!-- The annotated JDK to use -->
+        <dependency>
+          <groupId>org.checkerframework</groupId>
+          <artifactId>jdk8</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                <!-- <fork>true</fork> -->
+                <compilerArgs>
+                  <!-- location of the annotated JDK, which comes from a Maven dependency -->
+                  <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
+                </compilerArgs>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <!-- This plugin will set the properties values using dependency information -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>properties</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <pluginRepositories>
