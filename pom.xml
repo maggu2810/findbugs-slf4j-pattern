@@ -180,14 +180,15 @@
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
               <execution>
-                <id>copy</id>
-                <phase>package</phase>
+                <id>copy-checkerframework-stuff</id>
+                <phase>validate</phase>
                 <goals>
                   <goal>copy</goal>
                 </goals>
                 <configuration>
                   <artifactItems>
                     <artifactItem>
+                      <!-- The annotated JDK to use -->
                       <groupId>org.checkerframework</groupId>
                       <artifactId>jdk8</artifactId>
                       <version>${checkerframework.version}</version>
