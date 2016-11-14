@@ -117,12 +117,6 @@
             <target>${maven.compiler.target}</target>
           </configuration>
         </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.10</version>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -138,8 +132,6 @@
       </activation>
 
       <properties>
-        <!-- These properties will be set by the Maven Dependency plugin -->
-        <annotatedJdk>${org.checkerframework:jdk8:jar}</annotatedJdk>
         <!-- Uncomment to use the type annotations compiler. -->
         <typeAnnotationsJavac>${org.checkerframework:compiler:jar}</typeAnnotationsJavac>
       </properties>
@@ -158,12 +150,6 @@
             <artifactId>compiler</artifactId>
             <version>${checkerframework.version}</version>
           </dependency>
-          <!-- The annotated JDK to use -->
-          <dependency>
-            <groupId>org.checkerframework</groupId>
-            <artifactId>jdk8</artifactId>
-            <version>${checkerframework.version}</version>
-          </dependency>
         </dependencies>
       </dependencyManagement>
 
@@ -174,28 +160,49 @@
           <artifactId>checker</artifactId>
           <scope>provided</scope>
         </dependency>
-        <!-- The annotated JDK to use -->
-        <dependency>
-          <groupId>org.checkerframework</groupId>
-          <artifactId>jdk8</artifactId>
-          <scope>provided</scope>
-        </dependency>
       </dependencies>
 
       <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>2.10</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+
         <plugins>
+          <!-- Copy the annotated JDK to a known place, so it could be referenced without adding it to the dependencies. -->
           <plugin>
-            <!-- This plugin will set the properties values using dependency information -->
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
               <execution>
+                <id>copy</id>
+                <phase>package</phase>
                 <goals>
-                  <goal>properties</goal>
+                  <goal>copy</goal>
                 </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.checkerframework</groupId>
+                      <artifactId>jdk8</artifactId>
+                      <version>${checkerframework.version}</version>
+                      <type>jar</type>
+                      <destFileName>annotated-jdk.jar</destFileName>
+                    </artifactItem>
+                  </artifactItems>
+                  <outputDirectory>${project.build.directory}/additions</outputDirectory>
+                  <overWriteReleases>false</overWriteReleases>
+                  <overWriteSnapshots>true</overWriteSnapshots>
+                </configuration>
               </execution>
             </executions>
           </plugin>
+
 
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -224,7 +231,7 @@
                 <arg>-AshowSuppressWarningKeys</arg>
 
                 <!-- location of the annotated JDK, which comes from a Maven dependency -->
-                <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
+                <arg>-Xbootclasspath/p:${project.build.directory}/additions/annotated-jdk.jar</arg>
                 <!-- Uncomment the following line to use the type annotations compiler. -->
                 <!-- <arg>-J-Xbootclasspath/p:${typeAnnotationsJavac}</arg> -->
               </compilerArgs>
